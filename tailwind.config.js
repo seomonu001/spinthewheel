@@ -37,16 +37,22 @@ export default {
         'bounce-slow': 'bounce 1s infinite 100ms',
         'float': 'float 3s ease-in-out infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'gradient': 'gradient 8s linear infinite',
       },
       keyframes: {
         float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        }
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '50%': { transform: 'translateY(-10px) rotate(2deg)' },
+        },
+        gradient: {
+          '0%': { backgroundPosition: '0% center' },
+          '100%': { backgroundPosition: '200% center' },
+        },
       },
       boxShadow: {
         'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        'brutal': '4px 4px 0 0 rgba(0, 0, 0, 0.8)',
       },
       backdropBlur: {
         'glass': '4px',

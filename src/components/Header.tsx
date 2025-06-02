@@ -17,13 +17,13 @@ const Header: React.FC = () => {
   return (
     <header 
       className={`sticky top-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'glass-card backdrop-blur-md py-2' : 'bg-transparent py-4'
+        isScrolled ? 'glass-card backdrop-blur-xl py-2' : 'bg-transparent py-4'
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg animate-float">
+            <div className="h-12 w-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
               <div className="text-white">
                 <svg 
                   width="24" 
@@ -42,7 +42,7 @@ const Header: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-secondary-600">
+            <h1 className="text-2xl font-bold animated-gradient-text">
               SpinMaster
             </h1>
           </div>
