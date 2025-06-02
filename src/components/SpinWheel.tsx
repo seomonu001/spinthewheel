@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useWheel } from '../context/WheelContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Howl } from 'howler';
+import confetti from 'canvas-confetti';
 
 const SpinWheel: React.FC = () => {
   const { items, spinning, winner } = useWheel();
@@ -12,17 +13,19 @@ const SpinWheel: React.FC = () => {
   const spinSound = useRef<Howl | null>(null);
   const winSound = useRef<Howl | null>(null);
 
-  // Initialize sounds
+  // Initialize sounds with better quality effects
   useEffect(() => {
     spinSound.current = new Howl({
-      src: ['https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'],
+      src: ['https://assets.mixkit.co/active_storage/sfx/2003/2003.wav'],
       loop: true,
-      volume: 0.5
+      volume: 0.5,
+      rate: 1.2
     });
 
     winSound.current = new Howl({
-      src: ['https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'],
-      volume: 0.5
+      src: ['https://assets.mixkit.co/active_storage/sfx/1435/1435.wav'],
+      volume: 0.6,
+      rate: 1.1
     });
 
     return () => {
@@ -31,7 +34,7 @@ const SpinWheel: React.FC = () => {
     };
   }, []);
 
-  // Calculate the appropriate canvas size based on screen width
+  // Responsive canvas size calculation
   useEffect(() => {
     const updateSize = () => {
       const screenWidth = window.innerWidth;
@@ -53,6 +56,7 @@ const SpinWheel: React.FC = () => {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
+  // Enhanced wheel rendering with better visual effects
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || items.length === 0) return;
@@ -67,49 +71,49 @@ const SpinWheel: React.FC = () => {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw outer ring with metallic effect
+    // Draw enhanced outer ring with 3D effect
     const ringGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    ringGradient.addColorStop(0, '#2a2a2a');
-    ringGradient.addColorStop(0.5, '#4a4a4a');
-    ringGradient.addColorStop(1, '#2a2a2a');
+    ringGradient.addColorStop(0, '#3a3a3a');
+    ringGradient.addColorStop(0.5, '#5a5a5a');
+    ringGradient.addColorStop(1, '#3a3a3a');
 
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius + 10, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius + 15, 0, 2 * Math.PI);
     ctx.fillStyle = ringGradient;
     ctx.fill();
 
-    // Add metallic shine
+    // Add metallic shine effect
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius + 10, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius + 15, 0, 2 * Math.PI);
     const shineGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+    shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
     shineGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
-    shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+    shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
     ctx.fillStyle = shineGradient;
     ctx.fill();
 
-    // Draw wheel segments with enhanced gradients and effects
+    // Draw wheel segments with enhanced 3D effect
     const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
     let startAngle = 0;
     
-    items.forEach((item, index) => {
+    items.forEach((item) => {
       const sliceAngle = (2 * Math.PI * item.weight) / totalWeight;
       const endAngle = startAngle + sliceAngle;
       
-      // Create enhanced gradient
+      // Create enhanced 3D gradient
       const gradient = ctx.createRadialGradient(
-        centerX, centerY, radius * 0.2,
+        centerX, centerY, 0,
         centerX, centerY, radius
       );
       const baseColor = item.color;
-      gradient.addColorStop(0, lightenColor(baseColor, 30));
+      gradient.addColorStop(0, lightenColor(baseColor, 40));
       gradient.addColorStop(0.7, baseColor);
       gradient.addColorStop(1, darkenColor(baseColor, 20));
       
       // Draw slice with enhanced shadow
       ctx.save();
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
       ctx.shadowOffsetX = 2;
       ctx.shadowOffsetY = 2;
       
@@ -122,7 +126,7 @@ const SpinWheel: React.FC = () => {
       
       // Draw slice border with shine effect
       ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
       ctx.stroke();
       
       // Add highlight effect
@@ -134,21 +138,21 @@ const SpinWheel: React.FC = () => {
         centerX - radius/2, centerY - radius/2, 0,
         centerX, centerY, radius
       );
-      highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+      highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
       highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = highlightGradient;
       ctx.fill();
       ctx.restore();
       
-      // Draw text with enhanced styling
+      // Draw enhanced text
       ctx.save();
       ctx.translate(centerX, centerY);
       const textAngle = startAngle + sliceAngle / 2;
       ctx.rotate(textAngle);
       
       // Enhanced text shadow
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-      ctx.shadowBlur = 4;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+      ctx.shadowBlur = 5;
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
       
@@ -157,12 +161,12 @@ const SpinWheel: React.FC = () => {
       ctx.fillStyle = brightness > 160 ? '#000000' : '#ffffff';
       
       ctx.textAlign = 'right';
-      ctx.font = 'bold 16px Inter';
-      const text = item.text.length > 12 ? item.text.substring(0, 12) + '...' : item.text;
+      ctx.font = `bold ${radius * 0.08}px Inter`;
+      const text = item.text.length > 15 ? item.text.substring(0, 15) + '...' : item.text;
       
       // Draw text with outline for better readability
       if (brightness > 160) {
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.lineWidth = 3;
         ctx.strokeText(text, radius - 30, 6);
       }
@@ -177,28 +181,28 @@ const SpinWheel: React.FC = () => {
     ctx.save();
     // Outer circle with metallic effect
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius * 0.15, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius * 0.18, 0, 2 * Math.PI);
     const outerCenterGradient = ctx.createRadialGradient(
       centerX, centerY, 0,
-      centerX, centerY, radius * 0.15
+      centerX, centerY, radius * 0.18
     );
     outerCenterGradient.addColorStop(0, '#ffffff');
     outerCenterGradient.addColorStop(1, '#e0e0e0');
     ctx.fillStyle = outerCenterGradient;
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
     ctx.fill();
     
     // Inner circle with glossy effect
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius * 0.12, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius * 0.15, 0, 2 * Math.PI);
     const innerCenterGradient = ctx.createRadialGradient(
-      centerX - radius * 0.04, centerY - radius * 0.04, 0,
-      centerX, centerY, radius * 0.12
+      centerX - radius * 0.05, centerY - radius * 0.05, 0,
+      centerX, centerY, radius * 0.15
     );
-    innerCenterGradient.addColorStop(0, '#ff8f8f');
+    innerCenterGradient.addColorStop(0, '#ff9f9f');
     innerCenterGradient.addColorStop(0.7, '#e11d48');
     innerCenterGradient.addColorStop(1, '#c01038');
     ctx.fillStyle = innerCenterGradient;
@@ -206,24 +210,23 @@ const SpinWheel: React.FC = () => {
 
     // Add glossy highlight
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius * 0.12, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius * 0.15, 0, 2 * Math.PI);
     const glossGradient = ctx.createLinearGradient(
-      centerX, centerY - radius * 0.12,
-      centerX, centerY + radius * 0.12
+      centerX, centerY - radius * 0.15,
+      centerX, centerY + radius * 0.15
     );
-    glossGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+    glossGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
     glossGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
     glossGradient.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
     ctx.fillStyle = glossGradient;
     ctx.fill();
     ctx.restore();
 
-  }, [items, canvasSize]);
+  }, [items, canvasSize, rotation]);
 
-  // Handle wheel spinning animation with sound effects
+  // Enhanced spinning animation with better physics
   useEffect(() => {
     if (spinning) {
-      // Start spin sound
       spinSound.current?.play();
       
       const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
@@ -238,20 +241,20 @@ const SpinWheel: React.FC = () => {
         ? (winnerIndex * segmentAngle) + (segmentAngle / 2)
         : Math.random() * 2 * Math.PI;
       
-      const spinCount = 5 + Math.random() * 3; // Between 5-8 full rotations
+      const spinCount = 6 + Math.random() * 4; // Between 6-10 full rotations
       const targetRotation = (2 * Math.PI * spinCount) + winnerAngle;
       
       setFinalRotation(targetRotation);
       
       let start: number | null = null;
-      const duration = 4000; // 4 seconds spin time
+      const duration = 5000; // 5 seconds spin time
       
       const animate = (timestamp: number) => {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Enhanced easing function for more dynamic spin
+        // Enhanced easing function for more realistic spin
         const easeOut = (t: number) => {
           const c4 = (2 * Math.PI) / 3;
           return t === 1 ? 1 : 1 - Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4);
@@ -263,9 +266,38 @@ const SpinWheel: React.FC = () => {
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
-          // Stop spin sound and play win sound
           spinSound.current?.stop();
           winSound.current?.play();
+          
+          // Enhanced confetti effect
+          const duration = 3000;
+          const animationEnd = Date.now() + duration;
+          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+          const randomInRange = (min: number, max: number) => {
+            return Math.random() * (max - min) + min;
+          };
+
+          const interval: any = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+              return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+
+            confetti({
+              ...defaults,
+              particleCount,
+              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+            });
+            confetti({
+              ...defaults,
+              particleCount,
+              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+            });
+          }, 250);
         }
       };
       
@@ -330,10 +362,10 @@ const SpinWheel: React.FC = () => {
         />
       </motion.div>
       
-      {/* Animated pointer with enhanced design */}
+      {/* Enhanced pointer design */}
       <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
         <motion.div 
-          className="w-0 h-0 border-l-[20px] border-r-[20px] border-t-[30px] border-l-transparent border-r-transparent border-t-red-600 filter drop-shadow-lg"
+          className="w-0 h-0 border-l-[24px] border-r-[24px] border-t-[36px] border-l-transparent border-r-transparent border-t-red-600 filter drop-shadow-lg"
           animate={{
             y: [0, -8, 0],
           }}
@@ -342,10 +374,12 @@ const SpinWheel: React.FC = () => {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-        />
+        >
+          <div className="absolute top-[-36px] left-[-12px] w-[24px] h-[24px] bg-gradient-to-br from-red-500 to-red-700 rounded-full shadow-lg" />
+        </motion.div>
       </div>
 
-      {/* Winner celebration overlay */}
+      {/* Enhanced winner celebration overlay */}
       <AnimatePresence>
         {winner && !spinning && (
           <motion.div
@@ -354,9 +388,11 @@ const SpinWheel: React.FC = () => {
             exit={{ opacity: 0, scale: 0.8 }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="bg-white bg-opacity-90 p-6 rounded-2xl shadow-xl transform rotate-12">
-              <h3 className="text-2xl font-bold text-purple-600 mb-2">Winner!</h3>
-              <p className="text-3xl font-black text-gray-800">{winner.text}</p>
+            <div className="glass-card p-8 rounded-2xl shadow-2xl transform rotate-12">
+              <h3 className="text-2xl font-bold animated-gradient-text mb-2">Winner!</h3>
+              <p className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-secondary-600">
+                {winner.text}
+              </p>
             </div>
           </motion.div>
         )}
