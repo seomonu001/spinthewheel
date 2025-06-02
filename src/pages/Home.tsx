@@ -1,6 +1,7 @@
 import React from 'react';
 import SpinWheel from '../components/SpinWheel';
 import WheelControls from '../components/WheelControls';
+import WheelTools from '../components/WheelTools';
 import { useWheel } from '../context/WheelContext';
 import { Gift, Target, Share, BarChart4, Sliders, Users, Settings2 } from 'lucide-react';
 
@@ -22,12 +23,13 @@ const Home: React.FC = () => {
 
         {/* Main wheel section */}
         <section className="mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className="order-2 lg:order-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="order-2 lg:order-1 space-y-6">
+              <WheelTools />
               <WheelControls />
             </div>
             
-            <div className="order-1 lg:order-2 flex justify-center items-center">
+            <div className="order-1 lg:order-2 flex justify-center items-center sticky top-24">
               {items.length === 0 ? (
                 <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-full w-80 h-80 flex items-center justify-center p-8 text-center text-gray-500">
                   Add items on the left to create your wheel

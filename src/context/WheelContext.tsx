@@ -15,6 +15,8 @@ interface WheelContextType {
   addItem: (text: string) => void;
   updateItem: (id: string, updates: Partial<WheelItem>) => void;
   removeItem: (id: string) => void;
+  clearItems: () => void;
+  duplicateItem: (id: string) => void;
   spinning: boolean;
   spinWheel: () => void;
   winner: WheelItem | null;
@@ -85,6 +87,24 @@ export const WheelProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setItems(prevItems => prevItems.filter(item => item.id !== id));
     toast.success('Item removed!');
   }, []);
+
+  const clearItems = useCallback(() => {
+    setItems([]);
+    toast.success('All items cleared!');
+  }, []);
+
+  const duplicateItem = useCallback((id: string) => {
+    const itemToDuplicate = items.find(item => item.id === id);
+    if (itemToDuplicate) {
+      const newItem = {
+        ...itemToDuplicate,
+        id: uuidv4(),
+        text: `${itemToDuplicate.text} (Copy)`
+      };
+      setItems(prevItems => [...prevItems, newItem]);
+      toast.success('Item duplicated!');
+    }
+  }, [items]);
 
   const spinWheel = useCallback(() => {
     if (items.length < 2) {
@@ -166,30 +186,14 @@ export const WheelProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return url;
   }, [items]);
 
-  useEffect(() => {
-    // Load configuration from URL if present
-    const urlParams = new URLSearchParams(window.location.search);
-    const configParam = urlParams.get('config');
-    
-    if (configParam) {
-      try {
-        const config = JSON.parse(decodeURIComponent(configParam));
-        if (Array.isArray(config) && config.length > 0) {
-          setItems(config);
-          toast.success('Loaded shared wheel configuration!');
-        }
-      } catch (error) {
-        console.error('Failed to parse configuration from URL', error);
-      }
-    }
-  }, []);
-
   return (
     <WheelContext.Provider value={{
       items,
       addItem,
       updateItem,
       removeItem,
+      clearItems,
+      duplicateItem,
       spinning,
       spinWheel,
       winner,
