@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-50 via-primary-50 to-secondary-50 min-h-screen;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white bg-opacity-20 backdrop-blur-glass border border-white border-opacity-20 shadow-glass;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-medium px-6 py-3 rounded-lg 
+           shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white bg-opacity-90 text-gray-800 font-medium px-6 py-3 rounded-lg 
+           shadow-md hover:shadow-lg transition-all duration-300 
+           focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2;
+  }
+
+  .input-primary {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200 
+           focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
+           transition-all duration-300;
+  }
+}
+
+.wheel-container {
+  transform-origin: center;
+  will-change: transform;
+}
+
+.wheel-canvas {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
